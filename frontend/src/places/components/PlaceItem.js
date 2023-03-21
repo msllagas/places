@@ -21,7 +21,8 @@ const PlaceItem = (props) => {
         footer={<Button onClick={closeMapHandler}>CLOSE</Button>}
       >
         <div className="map-container">
-          <h2>MAP!</h2>
+          <h2>No Map!</h2>
+          <h2>Am broke. No map to show!</h2>
         </div>
       </Modal>
       <li className="place-item">

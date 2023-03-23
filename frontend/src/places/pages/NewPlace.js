@@ -1,12 +1,12 @@
-import { Link } from "react-router-dom";
+
+import Input from "../../shared/components/FormElements/Input";
+import './Newplace.css'
+
 const NewPlace = () => {
   return (
-    <div>
-      <h2>Hello from NewPlace</h2>
-      <Link to={"/users"}>
-        <button>To Users</button>
-      </Link>
-    </div>
+    <form className="place-form">
+      <Input element="input" type="text" label="Title" />
+    </form>
   );
 };
 

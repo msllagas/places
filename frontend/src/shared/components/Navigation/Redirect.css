@@ -1,4 +1,8 @@
 .redirect {
-    width: 10rem;
+    width: 20rem;
     margin: 1rem auto;
+    text-align: center;
+}
+a {
+    color: blue
 }

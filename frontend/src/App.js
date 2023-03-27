@@ -11,10 +11,10 @@ function App() {
       <MainNavigation />
       <main>
         <Routes>
-          <Route path="/" element={<Users />} exact />
-          <Route path="/:userId/places" element={<UserPlaces />} exact />
-          <Route path="/users" element={<Users />} exact />
-          <Route path="/places/new" element={<NewPlace />} exact />
+          <Route path="/" element={<Users />} exact="true" />
+          <Route path="/:userId/places" element={<UserPlaces />} exact="true"  />
+          <Route path="/users" element={<Users />} exact="true"  />
+          <Route path="/places/new" element={<NewPlace />} exact="true" />
           {/* <Route path="*" element={<Navigate to="/" />} replace/> */}
           <Route path="*" element={<Redirect />} />
         </Routes>

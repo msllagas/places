@@ -18,11 +18,11 @@ const TEMP_PLACES = [
   },
   {
     id: "p2",
-    title: "Empire State Building",
-    description: "Famouse building",
+    title: "Mount Fuji",
+    description: "Japan's active volano",
     imageUrl:
-      "https://images.pexels.com/photos/2404949/pexels-photo-2404949.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    address: "20 W 34th St., New York, NY 10001, United States",
+      "https://images.pexels.com/photos/14880837/pexels-photo-14880837.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    address: "Fuji-Hakone-Izu National Park",
     location: {
       lat: 40.2134,
       lng: -73.9878584,
@@ -32,7 +32,7 @@ const TEMP_PLACES = [
 ];
 
 const UserPlaces = (props) => {
-  const { userId } = useParams();
+  let { userId } = useParams();
   const loadedPlaces = TEMP_PLACES.filter((place) => place.creator === userId);
   return <PlaceList items={loadedPlaces} />;
 };

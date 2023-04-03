@@ -1,25 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import {
-  VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
+  VALIDATOR_MINLENGTH,
 } from "../../shared/util/validator";
 import useForm from "../../shared/hooks/form-hooks";
 import "./PlaceForm.css";
 
-const TEMP_PLACES = [
+const DUMMY_PLACES = [
   {
     id: "p1",
     title: "Empire State Building",
-    description: "Famouse building",
+    description: "One of the most famous sky scrapers in the world!",
     imageUrl:
-      "https://images.pexels.com/photos/2404949/pexels-photo-2404949.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    address: "20 W 34th St., New York, NY 10001, United States",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg",
+    address: "20 W 34th St, New York, NY 10001",
     location: {
-      lat: 40.2134,
+      lat: 40.7484405,
       lng: -73.9878584,
     },
     creator: "u1",
@@ -27,12 +27,12 @@ const TEMP_PLACES = [
   {
     id: "p2",
     title: "Empire State Building",
-    description: "Famouse building",
+    description: "One of the most famous sky scrapers in the world!",
     imageUrl:
-      "https://images.pexels.com/photos/2404949/pexels-photo-2404949.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    address: "20 W 34th St., New York, NY 10001, United States",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg",
+    address: "20 W 34th St, New York, NY 10001",
     location: {
-      lat: 40.2134,
+      lat: 40.7484405,
       lng: -73.9878584,
     },
     creator: "u2",
@@ -40,26 +40,46 @@ const TEMP_PLACES = [
 ];
 
 const UpdatePlace = () => {
+  const [isLoading, setIsLoading] = useState(true);
   let { placeId } = useParams();
-  const identifiedPlace = TEMP_PLACES.find((p) => p.id === placeId);
-  const [formState, inputHandler] = useForm(
+
+  const [formState, inputHandler, setFormData] = useForm(
     {
       title: {
-        value: identifiedPlace.title,
-        isValid: true,
+        value: "",
+        isValid: false,
       },
       description: {
-        value: identifiedPlace.description,
-        isValid: true,
+        value: "",
+        isValid: false,
       },
     },
-    true
+    false
   );
 
-  const placeUpdateSubmitHandler = event => {
+  const identifiedPlace = DUMMY_PLACES.find((p) => p.id === placeId);
+
+  useEffect(() => {
+    setFormData(
+      {
+        title: {
+          value: identifiedPlace.title,
+          isValid: true,
+        },
+        description: {
+          value: identifiedPlace.description,
+          isValid: true,
+        },
+      },
+      true
+    );
+    setIsLoading(false);
+  }, [setFormData, identifiedPlace]);
+
+  const placeUpdateSubmitHandler = (event) => {
     event.preventDefault();
     console.log(formState.inputs);
-  }
+  };
 
   if (!identifiedPlace) {
     return (
@@ -68,6 +88,15 @@ const UpdatePlace = () => {
       </div>
     );
   }
+
+  if (isLoading) {
+    return (
+      <div className="center">
+        <h2>Loading...</h2>
+      </div>
+    );
+  }
+
   return (
     <form className="place-form" onSubmit={placeUpdateSubmitHandler}>
       <Input
@@ -86,10 +115,10 @@ const UpdatePlace = () => {
         element="textarea"
         label="Description"
         validators={[VALIDATOR_MINLENGTH(5)]}
-        errorText="Please enter a valid description (minimun of 5 characters)."
+        errorText="Please enter a valid description (min. 5 characters)."
         onInput={inputHandler}
         initialValue={formState.inputs.description.value}
-        initialValid={formState.inputs.description.value}
+        initialValid={formState.inputs.description.isValid}
       />
       <Button type="submit" disabled={!formState.isValid}>
         UPDATE PLACE

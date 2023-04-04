@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Users from "./user/pages/Users";
 import NewPlace from "./places/pages/NewPlace";
@@ -17,29 +17,35 @@ function App() {
   const logout = useCallback(() => {
     setIsLoggedIn(false);
   }, []);
+
+  let routes;
+  if (isLoggedIn) {
+    routes = (
+      <React.Fragment>
+        <Route path="/" element={<Users />} exact="true" />
+        <Route path="/:userId/places" element={<UserPlaces />} exact="true" />
+        <Route path="/places/new" element={<NewPlace />} exact="true" />
+        <Route path="/places/:placeId" element={<UpdatePlace />} exact="true" />
+        <Route path="*" element={<Auth />} />
+      </React.Fragment>
+    );
+  } else {
+    routes = (
+      <React.Fragment>
+        <Route path="/" element={<Users />} exact="true" />
+        <Route path="/:userId/places" element={<UserPlaces />} exact="true" />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="*" element={<Auth />} />
+      </React.Fragment>
+    );
+  }
   return (
     <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
       <BrowserRouter>
         <MainNavigation />
         <main>
           <Routes>
-            <Route path="/" element={<Users />} exact="true" />
-            <Route
-              path="/:userId/places"
-              element={<UserPlaces />}
-              exact="true"
-            />
-            <Route path="/users" element={<Users />} exact="true" />
-            <Route path="/places/new" element={<NewPlace />} exact="true" />
-            <Route
-              path="/places/:placeId"
-              element={<UpdatePlace />}
-              exact="true"
-            />
-            dddddd
-            {/* <Route path="*" element={<Navigate to="/" />} replace/> */}
-            <Route path="/auth" element={<Auth />} />
-            <Route path="*" element={<Redirect />} />
+           {routes}
           </Routes>
         </main>
       </BrowserRouter>

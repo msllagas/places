@@ -5,6 +5,6 @@ const placeRouter = require('./routes/placeRoute');
 
 const app = express();
 
-app.use('/api/v1/place', placeRouter);
+app.use('/api/places', placeRouter);
 
 module.exports = app;

@@ -5,8 +5,7 @@ const placeRouter = require("./routes/placeRoute");
 
 const app = express();
 
-app.use(bodyParser.json());
-// app.use(express.json());
+app.use(express.json());
 
 app.use("/api/places", placeRouter);
 

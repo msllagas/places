@@ -19,6 +19,12 @@ const TEMP_PLACES = [
 router.route("/:pid").get((req, res, next) => {
   const placeId = req.params.pid;
   const place = TEMP_PLACES.find((p) => p.id === placeId);
+
+  if (!place) {
+    const error = new Error('Could not find a place for the provided id!');
+    error.code = 404;
+    throw error;
+  }
   res.status(200).json({
     message: "Success/Place",
     data: {
@@ -26,16 +32,21 @@ router.route("/:pid").get((req, res, next) => {
     },
   });
 });
-router.route("/user/:uid").get(
-  (req, res, next) => {
-    const userId = req.params.uid;
-    const place = TEMP_PLACES.find((p) => p.creator === userId);
-    res.status(200).json({
-      message: "Success/User",
-      data: {
-        place,
-      },
-    });
+
+router.route("/user/:uid").get((req, res, next) => {
+  const userId = req.params.uid;
+  const place = TEMP_PLACES.find((p) => p.creator === userId);
+  if (!place) {
+    const error = new Error('Could not find a user for the provided id!');
+    error.code = 404;
+    return next(error);
+  }
+  res.status(200).json({
+    message: "Success/User",
+    data: {
+      place,
+    },
   });
+});
 
 module.exports = router;

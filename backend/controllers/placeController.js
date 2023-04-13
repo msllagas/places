@@ -1,19 +1,18 @@
-
-const HttpError = require('../models/httpError');
+const HttpError = require("../models/httpError");
 
 const TEMP_PLACES = [
-    {
-      id: "p1",
-      title: "Empire State Building",
-      description: "Famous Building",
-      location: {
-        lat: 40.74,
-        lng: -73,
-      },
-      address: "New York, NY",
-      creator: "u1",
+  {
+    id: "p1",
+    title: "Empire State Building",
+    description: "Famous Building",
+    location: {
+      lat: 40.74,
+      lng: -73,
     },
-  ];
+    address: "New York, NY",
+    creator: "u1",
+  },
+];
 
 exports.getPlaceById = (req, res, next) => {
   const placeId = req.params.pid;
@@ -42,6 +41,27 @@ exports.getPlaceByUserId = (req, res, next) => {
     message: "Success/User",
     data: {
       place,
+    },
+  });
+};
+
+exports.createPlace = (req, res, next) => {
+  const { title, description, location, address, creator } = req.body;
+
+  const newPlace = {
+    title,
+    description,
+    location,
+    address,
+    creator,
+  };
+
+  TEMP_PLACES.push(newPlace);
+  
+  res.status(201).json({
+    message: "Success",
+    data: {
+        place: newPlace
     },
   });
 };

@@ -8,13 +8,16 @@ const router = express.Router();
 router
   .route("/:pid")
   .get(placeController.getPlaceById)
-  .patch(placeController.updatePlace)
+  .patch(
+    check("title").not().isEmpty(),
+    check("description").isLength({ min: 5 }),
+    placeController.updatePlace
+  )
   .delete(placeController.deletePlace);
 
 router.route("/user/:uid").get(placeController.getPlacesByUserId);
 
-router.post(
-  "/",
+router.route('/').post(
   check("title").not().isEmpty(),
   check("description").isLength({ min: 5 }),
   check("address").not().isEmpty(),

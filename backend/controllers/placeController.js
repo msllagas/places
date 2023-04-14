@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const HttpError = require("../models/httpError");
 
-const TEMP_PLACES = [
+let TEMP_PLACES = [
   {
     id: "p1",
     title: "Empire State Building",
@@ -86,4 +86,11 @@ exports.updatePlace = (req, res, next) => {
     },
   });
 };
-exports.deletePlace = (req, res, next) => {};
+exports.deletePlace = (req, res, next) => {
+  const placeId = req.params.pid;
+
+  TEMP_PLACES = TEMP_PLACES.filter((p) => p.id !== placeId);
+  res.status(200).json({
+    message: "Successfully deleted place.",
+  });
+};

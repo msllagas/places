@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require('uuid');
 const HttpError = require("../models/httpError");
 
 const TEMP_PLACES = [
@@ -49,6 +50,7 @@ exports.createPlace = (req, res, next) => {
   const { title, description, location, address, creator } = req.body;
 
   const newPlace = {
+    id: uuidv4(),
     title,
     description,
     location,

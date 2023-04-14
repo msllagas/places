@@ -9,7 +9,7 @@ router
   .patch(placeController.updatePlace)
   .delete(placeController.deletePlace);
 
-router.route("/user/:uid").get(placeController.getPlaceByUserId);
+router.route("/user/:uid").get(placeController.getPlacesByUserId);
 
 router.route("/").post(placeController.createPlace);
 

@@ -30,10 +30,10 @@ exports.getPlaceById = (req, res, next) => {
   });
 };
 
-exports.getPlaceByUserId = (req, res, next) => {
+exports.getPlacesByUserId = (req, res, next) => {
   const userId = req.params.uid;
-  const place = TEMP_PLACES.find((p) => p.creator === userId);
-  if (!place) {
+  const places = TEMP_PLACES.filter((p) => p.creator === userId);
+  if (!places || places.length === 0) {
     return next(
       new HttpError("Could not find a user for the provided id!", 404)
     );
@@ -41,7 +41,7 @@ exports.getPlaceByUserId = (req, res, next) => {
   res.status(200).json({
     message: "Success/User",
     data: {
-      place,
+      place: places,
     },
   });
 };

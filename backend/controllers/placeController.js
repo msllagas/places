@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 const HttpError = require("../models/httpError");
 
 const TEMP_PLACES = [
@@ -59,11 +59,31 @@ exports.createPlace = (req, res, next) => {
   };
 
   TEMP_PLACES.push(newPlace);
-  
+
   res.status(201).json({
     message: "Success",
     data: {
-        place: newPlace
+      place: newPlace,
     },
   });
 };
+
+exports.updatePlace = (req, res, next) => {
+  const { title, description } = req.body;
+  const placeId = req.params.pid;
+
+  const updatedPlace = TEMP_PLACES.find((p) => p.id === placeId);
+  const placeIndex = TEMP_PLACES.findIndex((p) => p.id === placeId);
+  updatedPlace.title = title;
+  updatedPlace.description = description;
+
+  TEMP_PLACES[placeIndex] = updatedPlace;
+
+  res.status(200).json({
+    message: "Success",
+    data: {
+      place: updatedPlace,
+    },
+  });
+};
+exports.deletePlace = (req, res, next) => {};

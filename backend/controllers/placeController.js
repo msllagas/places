@@ -128,7 +128,7 @@ exports.updatePlace = async (req, res, next) => {
       runValidators: true,
     });
     res.status(200).json({
-      message: "Success",
+      message: "Successful update!",
       data: {
         place: place.toObject({ getters: true }),
       },
@@ -143,15 +143,21 @@ exports.updatePlace = async (req, res, next) => {
 
   
 };
-exports.deletePlace = (req, res, next) => {
+exports.deletePlace = async (req, res, next) => {
   const placeId = req.params.pid;
 
-  if (!TEMP_PLACES.find((p) => p.id === placeId)) {
-    throw new HttpError("Could not find a place for that id.", 404);
+  try {
+    await Place.findByIdAndDelete(placeId);
+    res.status(204).json({
+      status: `Successfully delete place with the id ${placeId}`,
+      data: null,
+    });
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong. Could not delete place!",
+      500
+    );
+    return next(error);
   }
 
-  TEMP_PLACES = TEMP_PLACES.filter((p) => p.id !== placeId);
-  res.status(200).json({
-    message: "Successfully deleted place.",
-  });
 };

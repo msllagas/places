@@ -43,18 +43,28 @@ exports.getPlaceById = async (req, res, next) => {
   }
 };
 
-exports.getPlacesByUserId = (req, res, next) => {
+exports.getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
-  const places = TEMP_PLACES.filter((p) => p.creator === userId);
-  if (!places || places.length === 0) {
-    return next(
-      new HttpError("Could not find a user for the provided id!", 404)
+  let places;
+  try {
+    places = await Place.find({ creator: userId });
+    if (!places || places.length === 0) {
+      return next(
+        new HttpError("Could not find a user for the provided id!", 404)
+      );
+    }
+  } catch (err) {
+    const error = new HttpError(
+      "Fetching places failed. Please try again later!",
+      404
     );
+    return next(error);
   }
+
   res.status(200).json({
     message: "Success/User",
     data: {
-      place: places,
+      places: places.map((place) => place.toObject({ getters: true })),
     },
   });
 };

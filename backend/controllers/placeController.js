@@ -4,20 +4,8 @@ const { validationResult } = require("express-validator");
 const HttpError = require("../models/httpError");
 const getCoordinatesForAddress = require("../util/location");
 const Place = require("../models/place");
-
-let TEMP_PLACES = [
-  {
-    id: "p1",
-    title: "Empire State Building",
-    description: "Famous Building",
-    location: {
-      lat: 40.74,
-      lng: -73,
-    },
-    address: "New York, NY",
-    creator: "u1",
-  },
-];
+const User = require("../models/user");
+const mongoose = require("mongoose");
 
 exports.getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid;
@@ -96,12 +84,34 @@ exports.createPlace = async (req, res, next) => {
     creator,
   });
 
+  let user;
   try {
-    const createdPlace = await Place.create(newPlace);
+    user = await User.findById(creator);
+  } catch (err) {
+    const error = new HttpError(
+      "Creating place failed. Please try again.",
+      500
+    );
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError("Could not find user for provided id.", 404);
+    return next(error);
+  }
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await newPlace.save({ session: sess });
+    user.places.push(newPlace);
+    await user.save({ session: sess });
+    sess.commitTransaction();
+
     res.status(201).json({
       message: "Success",
       data: {
-        createdPlace,
+        newPlace,
       },
     });
   } catch (err) {
@@ -116,7 +126,9 @@ exports.createPlace = async (req, res, next) => {
 exports.updatePlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return next( new HttpError("Invalid inputs passed, please check your data", 422));
+    return next(
+      new HttpError("Invalid inputs passed, please check your data", 422)
+    );
   }
 
   const placeId = req.params.pid;
@@ -140,8 +152,6 @@ exports.updatePlace = async (req, res, next) => {
     );
     return next(error);
   }
-
-  
 };
 exports.deletePlace = async (req, res, next) => {
   const placeId = req.params.pid;
@@ -159,5 +169,4 @@ exports.deletePlace = async (req, res, next) => {
     );
     return next(error);
   }
-
 };

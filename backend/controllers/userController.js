@@ -28,7 +28,7 @@ exports.signup = async (req, res, next) => {
     );
   }
 
-  const { name, email, password, places } = req.body;
+  const { name, email, password } = req.body;
 
   let existingUser;
   try {
@@ -50,7 +50,7 @@ exports.signup = async (req, res, next) => {
     email,
     image: "https://randomuser.me/api/portraits/men/16.jpg",
     password,
-    places,
+    places: []
   });
 
   try {

@@ -4,20 +4,22 @@ const { validationResult } = require("express-validator");
 const HttpError = require("../models/httpError");
 const User = require("../models/user");
 
-const TEMP_USERS = [
-  {
-    id: "u1",
-    name: "Mandy Llagas",
-    email: "test@test.com",
-    password: "mypass123",
-  },
-];
-
-exports.getUsers = (req, res, next) => {
-  res.status(200).json({
-    data: TEMP_USERS,
-  });
+exports.getUsers = async (req, res, next) => {
+  let users;
+  try {
+    users = await User.find({}, "-password");
+  } catch (err) {
+    const error = new HttpError(
+      "Fetching users failed, please try again later.",
+      500
+    );
+    return next(error);
+  }
+  res
+    .status(200)
+    .json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
+
 exports.signup = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -60,10 +62,7 @@ exports.signup = async (req, res, next) => {
       },
     });
   } catch (err) {
-    const error = new HttpError(
-      `Sign up failed. Please try again later.`,
-      500
-    );
+    const error = new HttpError(`Sign up failed. Please try again later.`, 500);
     return next(error);
   }
 };
@@ -78,10 +77,7 @@ exports.login = async (req, res, next) => {
     return next(error);
   }
   if (!existingUser || existingUser.password !== password) {
-    const error = new HttpError(
-      "Invalid credentials. Could not login.",
-      401
-    );
+    const error = new HttpError("Invalid credentials. Could not login.", 401);
     return next(error);
   }
 

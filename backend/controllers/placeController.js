@@ -33,26 +33,29 @@ exports.getPlaceById = async (req, res, next) => {
 
 exports.getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
-  let places;
+  let userWithPlaces;
   try {
-    places = await Place.find({ creator: userId });
-    if (!places || places.length === 0) {
-      return next(
-        new HttpError("Could not find a user for the provided id!", 404)
-      );
-    }
+    userWithPlaces = await User.findById(userId).populate("places");
   } catch (err) {
     const error = new HttpError(
       "Fetching places failed. Please try again later!",
-      404
+      500
     );
     return next(error);
+  }
+
+  if (!userWithPlaces || userWithPlaces.places.length === 0) {
+    return next(
+      new HttpError("Could not find a user for the provided id!", 404)
+    );
   }
 
   res.status(200).json({
     message: "Success/User",
     data: {
-      places: places.map((place) => place.toObject({ getters: true })),
+      places: userWithPlaces.places.map((place) =>
+        place.toObject({ getters: true })
+      ),
     },
   });
 };
@@ -176,7 +179,7 @@ exports.deletePlace = async (req, res, next) => {
     session.startTransaction();
     await Place.findByIdAndRemove(placeId, { session });
     place.creator.places.pull(place);
-    await place.creator.save({session});
+    await place.creator.save({ session });
     await session.commitTransaction();
   } catch (err) {
     const error = new HttpError(
@@ -185,5 +188,5 @@ exports.deletePlace = async (req, res, next) => {
     );
     return next(error);
   }
-  res.status(200).json({message: 'Deleted place successfully!'})
+  res.status(200).json({ message: "Deleted place successfully!" });
 };
